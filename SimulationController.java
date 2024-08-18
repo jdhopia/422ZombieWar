@@ -1,42 +1,54 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Random;
 
-// class to control the simulation of the zombie war
 public class SimulationController {
     private List<Character> survivors;
     private List<Character> zombies;
+    private List<Weapon> weaponCache;
     private Random random;
 
-    // initializes the list of survivors and zombies
     public SimulationController() {
         survivors = new ArrayList<>();
         zombies = new ArrayList<>();
+        weaponCache = new ArrayList<>();
         random = new Random();
+        initializeWeaponCache();
     }
 
-    // method to initialize characters with random types
+    private void initializeWeaponCache() {
+        weaponCache.add(new Weapon("Shotgun", 25, 0.7));
+        weaponCache.add(new Weapon("Submachine Gun", 15, 0.8));
+        weaponCache.add(new Weapon("Assault Rifle", 20, 0.9));
+        weaponCache.add(new Weapon("Pistol", 10, 0.95));
+        weaponCache.add(new Weapon("Axe", 30, 0.6));
+        weaponCache.add(new Weapon("Crowbar", 20, 0.75));
+        weaponCache.add(new Weapon("Frying Pan", 5, 0.85));
+    }
+
     public void initializeCharacters() {
-        // Randomize the number of each type of survivor and zombie
         int numScientists = random.nextInt(5);
         int numCivilians = random.nextInt(5);
         int numSoldiers = random.nextInt(5);
         int numCommonInfected = random.nextInt(5);
         int numTanks = random.nextInt(5);
 
-        // Add survivors
         for (int i = 0; i < numScientists; i++) {
-            survivors.add(new Scientist());
+            Scientist scientist = new Scientist();
+            scientist.equipWeapon(getRandomWeapon());
+            survivors.add(scientist);
         }
         for (int i = 0; i < numCivilians; i++) {
-            survivors.add(new Civilian());
+            Civilian civilian = new Civilian();
+            civilian.equipWeapon(getRandomWeapon());
+            survivors.add(civilian);
         }
         for (int i = 0; i < numSoldiers; i++) {
-            survivors.add(new Soldier());
+            Soldier soldier = new Soldier();
+            soldier.equipWeapon(getRandomWeapon());
+            survivors.add(soldier);
         }
 
-        // Add zombies
         for (int i = 0; i < numCommonInfected; i++) {
             zombies.add(new CommonInfected());
         }
@@ -45,7 +57,10 @@ public class SimulationController {
         }
     }
 
-    // method to run the simulation
+    private Weapon getRandomWeapon() {
+        return weaponCache.get(random.nextInt(weaponCache.size()));
+    }
+
     public void runSimulation() {
         int survivorCounter = 0;
         int zombieCounter = 0;
@@ -84,8 +99,6 @@ public class SimulationController {
         }
     }
 
-
-    // method to report the results of the war
     public void reportResults() {
         long survivorsAlive = survivors.stream().filter(Character::isAlive).count();
         if (survivorsAlive == 0) {
